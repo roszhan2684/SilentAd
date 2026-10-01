@@ -1,124 +1,57 @@
-# SilentAd Basic
+<div align="center">
 
-A lightweight Chrome extension that automatically **mutes** video ads on YouTube, Hulu, Peacock, and common HTML5 video websites, then **restores your audio** once the ad ends.
+# 🔇 SilentAd
 
-> **Does not block or skip ads.** It only silences them.
+**Ads still play. You just don't have to hear them.**
 
----
+*A lightweight Chrome extension that mutes video ads the moment they start on YouTube, Hulu, Peacock and other HTML5 players, then brings your sound back the instant they end.*
 
-## What's New in Version 2
+![Chrome](https://img.shields.io/badge/Chrome-Extension-4285F4?style=flat-square&logo=googlechrome&logoColor=white)
+![Manifest](https://img.shields.io/badge/Manifest-V3-34A853?style=flat-square)
+![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+![Version](https://img.shields.io/badge/version-2.0.0-blue?style=flat-square)
 
-| Feature | v1 | v2 |
-|---|---|---|
-| YouTube ad muting | Yes | Yes |
-| Hulu support | No | Yes |
-| Peacock support | No | No |
-| VAST/network ad signal (YouTube) | No | Yes |
-| Live popup status ("Currently muting") | No | Yes |
-| Per-site enable/disable | No | Yes |
-| Show/hide on-page badge | No | Yes |
-| Generic HTML5 sites | Basic | Basic |
+<img src="docs/screenshots/popup-muting.png" width="300" alt="Popup while an ad is being muted" />&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="docs/screenshots/popup-idle.png" width="300" alt="Popup when no ad is playing" />
+
+</div>
 
 ---
 
-## Full Feature Table
+## Why SilentAd?
 
-| Feature | Supported |
+Ad blockers break sites and get you banned from streaming services. SilentAd takes a gentler route: it **never blocks** an ad, it just turns the volume down while it runs. Creators still get paid, sites keep working, and you stop wincing at sudden loud commercials.
+
+## Features
+
+- **Instant mute, instant restore.** Mutes both the video element *and* the tab when an ad starts, then restores your previous audio state when it ends.
+- **Works where you watch.** YouTube pre-roll and mid-roll ads, Hulu, Peacock, plus a generic HTML5 detector for other video sites.
+- **Two detection layers.** It reads the player's own ad markers in the page, and on YouTube it also listens for ad-network (VAST) requests, so ads are caught even when the page markup changes.
+- **Optional auto-skip.** When the site shows its own **Skip** button, SilentAd can press it for you. You can turn this off.
+- **Live status.** The popup shows *"Currently muting ad…"* in real time for the current tab.
+- **Your rules.** A global on/off switch, a per-site toggle, and an optional on-page **"Ad Muted"** badge.
+
+## Install (developer mode)
+
+1. Download or clone this repo.
+2. Open `chrome://extensions` and turn on **Developer mode**.
+3. Click **Load unpacked** and select the project folder.
+4. Pin 🔇 SilentAd, play a video, and enjoy the quiet.
+
+## How it works
+
+| File | Role |
 |---|---|
-| Detect YouTube pre-roll / mid-roll ads | Yes |
-| Detect Hulu ads | Yes (DOM-based) |
-| Detect Peacock ads | Yes (DOM-based) |
-| VAST network signal interception (YouTube) | Yes |
-| Mute video element during ad | Yes |
-| Mute tab during ad | Yes |
-| Restore previous audio state after ad | Yes |
-| Show "Ad Muted" badge on page | Yes (toggleable) |
-| Live status in popup | Yes |
-| Global enable/disable toggle | Yes |
-| Per-site enable/disable toggle | Yes |
-| Badge show/hide preference | Yes |
-| Hulu / Peacock | Yes (v2) |
-| Netflix / Disney+ | Not included |
+| `manifest.json` | MV3 manifest: permissions, host matches and content scripts |
+| `content.js` | Detects ads in the page (YouTube, Hulu, Peacock, generic), mutes the video, shows the badge, and handles auto-skip |
+| `injected.js` | Runs in the page context and intercepts `fetch`/XHR to spot ad-network requests on YouTube |
+| `background.js` | Service worker that mutes and unmutes the whole tab via `chrome.tabs` |
+| `popup.html/css/js` | Settings and live status UI, saved with `chrome.storage` |
 
----
+## Privacy
 
-## How to Load (Unpacked)
+Everything runs locally in your browser. There are no servers, no analytics and no tracking. Settings are stored in `chrome.storage.local`.
 
-> Requires Chrome 111+ for the VAST network interception feature (`world: "MAIN"` content scripts).
+## About
 
-1. Open **chrome://extensions** in Chrome.
-2. Enable **Developer Mode** (top-right toggle).
-3. Click **Load unpacked**.
-4. Select the `silentad-basic` folder.
-5. The extension icon will appear in your toolbar.
-
-If you previously loaded v1, click the **reload** icon on the extension card after selecting the updated folder.
-
----
-
-## Testing Instructions
-
-### YouTube
-1. Open [YouTube](https://www.youtube.com) and play a video likely to show ads.
-2. When an ad starts:
-   - Tab audio drops to zero.
-   - **"Ad Muted"** badge appears in the bottom-right corner.
-   - Popup shows **"Currently muting ad…"** with a pulsing dot.
-3. Ad ends → audio restores, badge disappears.
-
-### Hulu
-1. Open [Hulu](https://www.hulu.com) and play any show or movie.
-2. When a mid-roll ad plays, tab should mute and badge should appear.
-3. Audio restores when content resumes.
-
-### Popup Controls
-| Control | What it does |
-|---|---|
-| **Mute Ads** toggle | Globally enable/disable for all sites |
-| **Mute on this site** toggle | Disable only on the current hostname |
-| **Show badge** toggle | Hide/show the on-page "Ad Muted" label |
-| **Live status indicator** | Shows "Currently muting ad…" or "No ad playing" in real time |
-
-### Console Debugging
-Open DevTools → Console, filter by `[SilentAd]`:
-```
-[SilentAd v2] Loaded on: www.youtube.com
-[SilentAd] VAST/network signal: /api/stats/ads?...
-[SilentAd] Ad muted. (wasMuted: false vol: 1)
-[SilentAd] Audio restored. (muted: false vol: 1)
-```
-
----
-
-## Permissions Used
-
-| Permission | Why |
-|---|---|
-| `storage` | Save toggle states and per-site disabled list |
-| `tabs` | Mute/unmute the browser tab during an ad |
-| Host access | Inject content script on YouTube, Hulu, Peacock, and other sites |
-
-No data is collected. No external requests are made. Everything runs locally.
-
----
-
-## Limitations
-
-- **YouTube** — works best; has both DOM class detection and VAST network signal.
-- **Hulu / Peacock** — DOM-based only; class names may change with app updates.
-- **Generic sites** — keyword detection; may produce false positives on pages with ad-related text.
-- **Does not block or skip ads** — by design, to comply with platform terms of service.
-- **Netflix / Disney+** — not included.
-- **VAST network interception requires Chrome 111+** — the `world: "MAIN"` content script feature.
-- **Firefox** — requires [webextension-polyfill](https://github.com/mozilla/webextension-polyfill) for full compatibility.
-
----
-
-## Version 3 Ideas
-
-- Netflix support (detect `[data-uia*="ad"]` markers).
-- Disney+ support.
-- Sidebar list in popup showing all disabled sites with remove buttons.
-- Persistent mute log: count of ads muted this session.
-- Auto-update Hulu/Peacock selectors via a remote config (optional, privacy-respecting).
-- Firefox AMO release with webextension-polyfill bundled.
+Built by **Roszhan Raj**.
