@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SilentAd Basic</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="container">
+
+    <header>
+      <span class="logo">&#128263;</span>
+      <h1>SilentAd Basic</h1>
+      <span class="version-badge">v2</span>
+    </header>
+
+    <!-- Live ad status -->
+    <div id="live-status" class="live-status live-idle">
+      <span class="live-dot"></span>
+      <span id="live-text">No ad playing</span>
+    </div>
+
+    <!-- Global toggle -->
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <span class="toggle-label">Mute Ads</span>
+        <span class="toggle-sub">All sites</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="toggle" checked />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <!-- Per-site toggle -->
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <span class="toggle-label">Mute on this site</span>
+        <span id="current-site" class="toggle-sub">—</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="site-toggle" checked />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <!-- Badge toggle -->
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <span class="toggle-label">Show badge</span>
+        <span class="toggle-sub">On-page "Ad Muted" label</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="badge-toggle" checked />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <!-- Skip toggle -->
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <span class="toggle-label">Auto-skip ads</span>
+        <span class="toggle-sub">Click skip when button appears</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="skip-toggle" checked />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <footer>
+      Mutes and skips ads when detected.
+    </footer>
+
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
